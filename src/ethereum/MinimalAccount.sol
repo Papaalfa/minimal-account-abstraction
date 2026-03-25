@@ -13,37 +13,45 @@ contract MinimalAccount is IAccount, Ownable {
     /*//////////////////////////////////////////////////////////////
                              ERRORS
     //////////////////////////////////////////////////////////////*/
-    error MininalAccount__NotFromEntryPoint();
-    error MininalAccount__NotFromEntryPointOrOwner();
-    error MinimalAccount__CallFailed();
+    error MinimalAccount__NotFromEntryPoint();
+    error MinimalAccount__NotFromEntryPointOrOwner();
+    error MinimalAccount__CallFailed(bytes);
 
     /*//////////////////////////////////////////////////////////////
                         STATE VARIABLES
     //////////////////////////////////////////////////////////////*/
-    IEntryPoint private immutable i_entryPoint;
+    IEntryPoint private immutable I_ENTRY_POINT;
 
     /*//////////////////////////////////////////////////////////////
                            MODIFIERS
     //////////////////////////////////////////////////////////////*/
     modifier requireFromEntryPoint() {
-        if (msg.sender != address(i_entryPoint)) {
-            revert MininalAccount__NotFromEntryPoint();
-        }
+        _requireFromEntryPoint();
         _;
     }
 
+    function _requireFromEntryPoint() internal view {
+        if (msg.sender != address(I_ENTRY_POINT)) {
+            revert MinimalAccount__NotFromEntryPoint();
+        }
+    }
+
     modifier requireFromEntryPointOrOwner() {
-        if (msg.sender != address(i_entryPoint) && msg.sender != owner()) {
+        _requireFromEntryPointOrOwner();
+        _;
+    }
+
+    function _requireFromEntryPointOrOwner() internal view {
+        if (msg.sender != address(I_ENTRY_POINT) && msg.sender != owner()) {
             revert MinimalAccount__NotFromEntryPointOrOwner();
         }
-        _;
     }
 
     /*//////////////////////////////////////////////////////////////
                            FUNCTIONS
     //////////////////////////////////////////////////////////////*/
     constructor(address entryPoint) Ownable(msg.sender) {
-        i_entryPoint = IEntryPoint(entryPoint);
+        I_ENTRY_POINT = IEntryPoint(entryPoint);
     }
 
     receive() external payable {}
@@ -104,6 +112,6 @@ contract MinimalAccount is IAccount, Ownable {
                             GETTERS
     //////////////////////////////////////////////////////////////*/
     function getEntryPoint() external view returns (address) {
-        return address(i_entryPoint);
+        return address(I_ENTRY_POINT);
     }
 }
