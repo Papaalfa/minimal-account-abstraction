@@ -24,7 +24,7 @@ contract MinimalAccountTest is Test, ZkSyncChainChecker {
 
     address randomUser = makeAddr("randomUser");
 
-    function setUp() public {
+    function setUp() public skipZkSync {
         DeployMinimal deployMinimal = new DeployMinimal();
         (helperConfig, minimalAccount) = deployMinimal.deployMinimalAccount();
         usdc = new ERC20Mock();
@@ -36,7 +36,7 @@ contract MinimalAccountTest is Test, ZkSyncChainChecker {
     // approve some amount
     // USDC contract
     // come from the entrypoint
-    function testOwnerCanExecuteCommands() public {
+    function testOwnerCanExecuteCommands() public skipZkSync {
         //Arrange
         assertEq(usdc.balanceOf(address(minimalAccount)), 0);
         address dest = address(usdc);
@@ -51,7 +51,7 @@ contract MinimalAccountTest is Test, ZkSyncChainChecker {
         assertEq(usdc.balanceOf(address(minimalAccount)), AMOUNT);
     }
 
-    function testNotOwnerCannotExecuteCommands() public {
+    function testNotOwnerCannotExecuteCommands() public skipZkSync {
         //Arrange
         assertEq(usdc.balanceOf(address(minimalAccount)), 0);
         address dest = address(usdc);
@@ -64,7 +64,7 @@ contract MinimalAccountTest is Test, ZkSyncChainChecker {
         minimalAccount.execute(dest, value, data);
     }
 
-    function testRecoverSignedOp() public {
+    function testRecoverSignedOp() public skipZkSync {
         //Arrange
         assertEq(usdc.balanceOf(address(minimalAccount)), 0);
         address dest = address(usdc);
@@ -115,7 +115,7 @@ contract MinimalAccountTest is Test, ZkSyncChainChecker {
         assertEq(validationData, 0);
     }
 
-    function testEntryPointCanExecuteCommands() public {
+    function testEntryPointCanExecuteCommands() public skipZkSync {
         // Arrange
         assertEq(usdc.balanceOf(address(minimalAccount)), 0);
         address dest = address(usdc);
